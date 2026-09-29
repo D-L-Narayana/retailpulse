@@ -1,7 +1,7 @@
 # RetailPulse — Python + SQL Retail Analytics Dashboard
 
 [![CI](https://github.com/D-L-Narayana/retailpulse/actions/workflows/ci.yml/badge.svg)](https://github.com/D-L-Narayana/retailpulse/actions)
-**Live dashboard:** https://retailpulse-dln.vercel.app
+**Live dashboard:** https://d-l-narayana.github.io/retailpulse/
 
 RetailPulse is a small, dependency-free analytics pipeline: it generates a
 realistic retail transaction dataset, loads it into a normalised SQLite schema,
