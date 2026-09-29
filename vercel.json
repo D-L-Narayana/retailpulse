@@ -1,0 +1,5 @@
+{
+  "buildCommand": "python3 -m retailpulse build --out public",
+  "outputDirectory": "public",
+  "framework": null
+}
