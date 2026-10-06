@@ -11,17 +11,24 @@ concurrency: { group: pages, cancel-in-progress: true }
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install pytest && python -m pytest -q
-      - run: python -m retailpulse build --out public
+      - name: Install package with dev tools
+        run: python -m pip install -e ".[dev]"
+      - name: Test before publishing
+        run: python -m pytest -q
+      - name: Build dashboard
+        # The Markdown summary (KPIs + data-quality table) lands in the deploy summary.
+        run: python -m retailpulse build --out public --summary "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-pages-artifact@v3
         with: { path: public }
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     environment: { name: github-pages, url: "${{ steps.deployment.outputs.page_url }}" }
     steps:
       - id: deployment

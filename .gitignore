@@ -5,3 +5,18 @@ __pycache__/
 public/
 *.db
 .vercel
+
+# tooling and packaging artefacts
+.venv/
+.ruff_cache/
+.mypy_cache/
+dist/
+build/
+*.egg-info/
+htmlcov/
+coverage.xml
+
+# SQLite side files
+*.db-journal
+*.db-wal
+*.db-shm

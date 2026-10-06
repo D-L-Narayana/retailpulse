@@ -1,23 +1,86 @@
+[build-system]
+# setuptools >= 77 implements PEP 639 (`license` as an SPDX expression + `license-files`).
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "retailpulse"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Python + SQL retail analytics pipeline that renders a static dashboard"
+readme = "README.md"
 requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "D L Narayana" }]
+keywords = ["sqlite", "analytics", "retail", "dashboard", "sql", "window-functions"]
+# No `License ::` classifier on purpose: PEP 639 deprecates them once `license` is an SPDX expression,
+# setuptools >= 77 warns (and is scheduled to error) when both are present, and PyPI rejects the pair.
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Database",
+]
+# The runtime is standard library only (sqlite3, argparse, json, html, csv). Keep this empty.
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "pytest-cov"]
+# pytest-timeout is diagnostic only (per-test bound for hang hunting); no `--timeout` is forced in addopts or CI.
+dev = ["pytest>=8", "pytest-cov", "pytest-timeout", "ruff", "mypy"]
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
+[project.urls]
+Homepage = "https://github.com/D-L-Narayana/retailpulse"
+Dashboard = "https://d-l-narayana.github.io/retailpulse/"
+Source = "https://github.com/D-L-Narayana/retailpulse"
+Issues = "https://github.com/D-L-Narayana/retailpulse/issues"
 
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
+[project.scripts]
+retailpulse = "retailpulse.cli:main"
 
 [tool.setuptools]
 packages = ["retailpulse"]
 include-package-data = true
 
+[tool.setuptools.dynamic]
+# Single source of truth for the version: retailpulse/__init__.py
+version = { attr = "retailpulse.__version__" }
+
 [tool.setuptools.package-data]
-retailpulse = ["sql/*.sql"]
+retailpulse = ["sql/*.sql", "py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# No `--cov` here on purpose: plain `pytest` stays fast; CI passes the coverage flags explicitly.
+addopts = "-ra --strict-markers"
+markers = ["slow: long-running budget tests (always run; never deselected in CI)"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["E731"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["retailpulse"]
+check_untyped_defs = true
+warn_unused_ignores = true
+warn_return_any = true
+no_implicit_optional = true
+
+[tool.coverage.run]
+branch = true
+source = ["retailpulse"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+skip_covered = false
