@@ -23,7 +23,7 @@ jobs:
       - name: Build dashboard
         # The Markdown summary (KPIs + data-quality table) lands in the deploy summary.
         run: python -m retailpulse build --out public --summary "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with: { path: public }
   deploy:
     needs: build
